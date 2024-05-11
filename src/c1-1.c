@@ -3,7 +3,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
-void error_callback(int error, const char *description)
+void errorCallback(int error, const char *description)
 {
   printf("Error: %s\n", description);
 }
@@ -28,7 +28,7 @@ enum Attrib_IDs
 GLuint VAOs[NumVAOs];
 GLuint Buffers[NumBuffers];
 
-GLuint load_shader_binary(const char *filename, GLenum type)
+GLuint loadShaderBinary(const char *filename, GLenum type)
 {
   GLsizei len;
   void *buffer;
@@ -59,8 +59,8 @@ GLuint load_shader_binary(const char *filename, GLenum type)
 
   fclose(file);
 
-  glShaderBinary(1, &shader, GL_SPIR_V_BINARY, buffer, len);
-  free(buffer);
+  glShaderBinary(1, &shader, GL_SHADER_BINARY_FORMAT_SPIR_V, buffer, len);
+  glSpecializeShader(shader, "main", 0, NULL, NULL);
   return shader;
 }
 
@@ -77,13 +77,25 @@ void init(GLFWwindow *window)
   glCreateBuffers(NumBuffers, Buffers);
   glNamedBufferStorage(Buffers[ArrayBuffer], sizeof(vertices), vertices, 0);
 
-  GLuint vert_shader = load_shader_binary("shaders/triangle.vert.spv", GL_VERTEX_SHADER);
-  GLuint frag_shader = load_shader_binary("shaders/triangle.frag.spv", GL_FRAGMENT_SHADER);
-  GLuint shader_program = glCreateProgram();
-  glAttachShader(shader_program, vert_shader);
-  glAttachShader(shader_program, frag_shader);
-  glLinkProgram(shader_program);
-  glUseProgram(shader_program);
+  GLuint vertShader = loadShaderBinary("shaders/triangle.vert.spv", GL_VERTEX_SHADER);
+  GLuint fragShader = loadShaderBinary("shaders/triangle.frag.spv", GL_FRAGMENT_SHADER);
+  GLuint shaderProgram = glCreateProgram();
+  glAttachShader(shaderProgram, vertShader);
+  glAttachShader(shaderProgram, fragShader);
+  glLinkProgram(shaderProgram);
+  GLint linked = 0;
+  glGetProgramiv(shaderProgram, GL_LINK_STATUS, &linked);
+  if (!linked)
+  {
+    GLint logSize = 0;
+    glGetProgramiv(shaderProgram, GL_INFO_LOG_LENGTH, &logSize);
+    char *errorLog = (char *)malloc(logSize + 1);
+    errorLog[logSize] = '\0';
+    glGetProgramInfoLog(shaderProgram, logSize, NULL, errorLog);
+    fprintf(stderr, "Error linking program: %s\n", errorLog);
+    free(errorLog);
+  }
+  glUseProgram(shaderProgram);
 
   glGenVertexArrays(NumVAOs, VAOs);
   glBindVertexArray(VAOs[Triangles]);
@@ -94,7 +106,7 @@ void init(GLFWwindow *window)
 
 void draw(GLFWwindow *window)
 {
-  static const float black[] = {0.0f, 0.0f, 0.0f, 0.0f};
+  static const float black[] = {0.0f, 0.0f, 0.0f, 1.0f};
   glClearBufferfv(GL_COLOR, 0, black);
   glBindVertexArray(VAOs[Triangles]);
   glDrawArrays(GL_TRIANGLES, 0, NUM_VERTICES);
@@ -103,7 +115,7 @@ void draw(GLFWwindow *window)
 int main(void)
 {
   GLFWwindow *window;
-  glfwSetErrorCallback(error_callback);
+  glfwSetErrorCallback(errorCallback);
 
   /* Initialize the library */
   if (!glfwInit())

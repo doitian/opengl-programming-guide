@@ -1,12 +1,12 @@
 #include <stdio.h>
 #include <GLFW/glfw3.h>
 
-void error_callback(int error, const char *description)
+void errorCallback(int error, const char *description)
 {
   printf("Error: %s\n", description);
 }
 
-void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
+void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
 {
   printf("Key: %d, Scancode: %d, Action: %d, Mods: %d\n", key, scancode, action, mods);
 }
@@ -14,7 +14,7 @@ void key_callback(GLFWwindow *window, int key, int scancode, int action, int mod
 int main(void)
 {
   GLFWwindow *window;
-  glfwSetErrorCallback(error_callback);
+  glfwSetErrorCallback(errorCallback);
 
   /* Initialize the library */
   if (!glfwInit())
@@ -32,10 +32,10 @@ int main(void)
   /* Make the window's context current */
   glfwMakeContextCurrent(window);
 
-  glfwSetKeyCallback(window, key_callback);
-
   printf("GL_VERSION = %s\n", glGetString(GL_VERSION));
   printf("GL_RENDERER = %s\n", glGetString(GL_RENDERER));
+
+  glfwSetKeyCallback(window, keyCallback);
 
   /* Loop until the user closes the window */
   while (!glfwWindowShouldClose(window))

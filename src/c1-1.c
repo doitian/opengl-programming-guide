@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <GL/glew.h>
 #include <GLFW/glfw3.h>
 
 void error_callback(int error, const char *description)
@@ -6,9 +7,12 @@ void error_callback(int error, const char *description)
   printf("Error: %s\n", description);
 }
 
-void key_callback(GLFWwindow *window, int key, int scancode, int action, int mods)
+void init(GLFWwindow *window)
 {
-  printf("Key: %d, Scancode: %d, Action: %d, Mods: %d\n", key, scancode, action, mods);
+}
+
+void draw(GLFWwindow *window)
+{
 }
 
 int main(void)
@@ -22,7 +26,6 @@ int main(void)
 
   /* Create a windowed mode window and its OpenGL context */
   window = glfwCreateWindow(640, 480, "Hello World", NULL, NULL);
-
   if (!window)
   {
     glfwTerminate();
@@ -32,16 +35,15 @@ int main(void)
   /* Make the window's context current */
   glfwMakeContextCurrent(window);
 
-  glfwSetKeyCallback(window, key_callback);
-
-  printf("GL_VERSION = %s\n", glGetString(GL_VERSION));
-  printf("GL_RENDERER = %s\n", glGetString(GL_RENDERER));
+  init(window);
 
   /* Loop until the user closes the window */
   while (!glfwWindowShouldClose(window))
   {
     /* Render here */
     glClear(GL_COLOR_BUFFER_BIT);
+
+    draw(window);
 
     /* Swap front and back buffers */
     glfwSwapBuffers(window);

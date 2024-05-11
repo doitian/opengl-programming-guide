@@ -89,11 +89,13 @@ void init(GLFWwindow *window)
   {
     GLint logSize = 0;
     glGetProgramiv(shaderProgram, GL_INFO_LOG_LENGTH, &logSize);
-    char *errorLog = (char *)malloc(logSize + 1);
-    errorLog[logSize] = '\0';
-    glGetProgramInfoLog(shaderProgram, logSize, NULL, errorLog);
-    fprintf(stderr, "Error linking program: %s\n", errorLog);
-    free(errorLog);
+    if (logSize > 0)
+    {
+      char *errorLog = (char *)malloc(logSize);
+      glGetProgramInfoLog(shaderProgram, logSize, NULL, errorLog);
+      fprintf(stderr, "Error linking program: %s\n", errorLog);
+      free(errorLog);
+    }
   }
   glUseProgram(shaderProgram);
 

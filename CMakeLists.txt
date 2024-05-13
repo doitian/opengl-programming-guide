@@ -41,7 +41,10 @@ endfunction()
 add_executable(a1 src/a1.c)
 target_link_libraries(a1 glfw)
 
-
 add_executable(c1-1 src/c1-1.c)
 target_link_libraries(c1-1 glfw GLEW::GLEW opengl::opengl)
 compile_shaders(c1-1 "${CMAKE_SOURCE_DIR}/shaders/triangle.vert" "${CMAKE_SOURCE_DIR}/shaders/triangle.frag")
+
+add_executable(c2-1 src/c2-1.c)
+target_link_libraries(c2-1 glfw GLEW::GLEW opengl::opengl)
+compile_shaders(c2-1 "${CMAKE_SOURCE_DIR}/shaders/uniform-block.vert" "${CMAKE_SOURCE_DIR}/shaders/uniform-block.frag")

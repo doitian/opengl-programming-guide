@@ -7,6 +7,7 @@ find_package(Vulkan COMPONENTS glslc)
 find_program(glslc_executable NAMES glslc glslc.exe HINTS Vulkan::glslc REQUIRED)
 
 function(compile_shaders target)
+  set(spirv_files "")
   # Loop through each shader file
   foreach(shader ${ARGN})
     # Get the filename and extension
@@ -18,7 +19,7 @@ function(compile_shaders target)
     add_custom_command(
       OUTPUT ${spirv_file}
       COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/shaders/"
-      COMMAND ${glslc_executable} ${shader} -o ${spirv_file}
+      COMMAND ${glslc_executable} ${shader} -o ${spirv_file} --target-env=opengl
       DEPENDS ${shader}
       VERBATIM
     )

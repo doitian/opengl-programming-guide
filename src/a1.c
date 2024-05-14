@@ -1,3 +1,6 @@
+/**
+ * Set up a window with the OpenGL context.
+ */
 #include <stdio.h>
 #include <GLFW/glfw3.h>
 
